@@ -444,14 +444,18 @@ export default function CandidatesTable() {
                                     ? 'success'
                                     : offerStatuses[record._id] === 'pending'
                                         ? 'processing'
-                                        : 'default'
+                                        : offerStatuses[record._id] === 'declined'
+                                            ? 'error'
+                                            : 'default'
                             }
                         >
                             {offerStatuses[record._id] === 'accepted'
                                 ? 'Accepted'
                                 : offerStatuses[record._id] === 'pending'
                                     ? 'Pending'
-                                    : 'Not Sent'}
+                                    : offerStatuses[record._id] === 'declined'
+                                        ? 'Declined'
+                                        : 'Not Sent'}
                         </Tag>
                     )}
                 </div>
