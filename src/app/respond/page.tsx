@@ -298,8 +298,8 @@ export default function RespondPage() {
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
                 Need help? Contact our hiring team at{' '}
-                <a href="mailto:hiring@sandevex.com" className="text-blue-600 hover:underline">
-                  hiring@sandevex.com
+                <a href="mailto:sandevex@gmail.com" className="text-blue-600 hover:underline">
+                  sandevex@gmail.com
                 </a>
               </p>
             </div>
