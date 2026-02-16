@@ -90,10 +90,10 @@ export const OFFER_EMAIL_TEMPLATE = `
 `;
 
 export const EMAIL_DEFAULTS = {
-  position: 'Software Engineer',
+  position: 'Software Engineer Level-1',
   department: 'Engineering',
   mode: 'In-Office',
   internship_type: 'Full-time',
-  duration: '6 months',
+  duration: '3 months',
   domain: 'sandevex.com' // Update this with your actual domain
 };
