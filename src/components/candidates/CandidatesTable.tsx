@@ -93,7 +93,10 @@ export default function CandidatesTable() {
             // Filter by offer status
             const matchesStatus = !statusFilter ||
                 (statusFilter === 'sent' && offerStatuses[student._id]) ||
-                (statusFilter === 'not-sent' && !offerStatuses[student._id]);
+                (statusFilter === 'not-sent' && !offerStatuses[student._id]) ||
+                (statusFilter === 'accepted' && offerStatuses[student._id] === 'accepted') ||
+                (statusFilter === 'pending' && offerStatuses[student._id] === 'pending') ||
+                (statusFilter === 'declined' && offerStatuses[student._id] === 'declined');
 
             return matchesSearch && matchesStatus;
         });
@@ -351,6 +354,24 @@ export default function CandidatesTable() {
             key: 'not-sent',
             label: 'Not Sent',
             onClick: () => setStatusFilter('not-sent')
+        },
+        {
+            type: 'divider'
+        },
+        {
+            key: 'accepted',
+            label: 'Accepted',
+            onClick: () => setStatusFilter('accepted')
+        },
+        {
+            key: 'pending',
+            label: 'Pending',
+            onClick: () => setStatusFilter('pending')
+        },
+        {
+            key: 'declined',
+            label: 'Declined',
+            onClick: () => setStatusFilter('declined')
         },
     ];
 
