@@ -93,12 +93,9 @@ export default function AppointsManagePage() {
       const data = await res.json();
       
       if (res.ok) {
-        // Filter only offers with accepted status
-        const acceptedOffers = data.offers.filter((offer: Offer) => 
-          offer.status === 'accepted'
-        );
-        setOffers(acceptedOffers);
-        setFilteredOffers(acceptedOffers);
+        // Show all offers
+        setOffers(data.offers);
+        setFilteredOffers(data.offers);
       } else {
         notification.error({
           message: 'Error',
@@ -268,10 +265,10 @@ export default function AppointsManagePage() {
         {/* Header */}
         <Card style={{ marginBottom: '24px' }} bodyStyle={{ padding: '24px' }}>
           <Title level={2} style={{ margin: 0, color: '#1f2937' }}>
-            Manage Accepted Offers
+            Manage All Offers
           </Title>
           <Text type="secondary" style={{ marginTop: '8px' }}>
-            Students who have accepted their offers and need to book collection slots
+            View and manage all student offers
           </Text>
         </Card>
 
@@ -280,7 +277,7 @@ export default function AppointsManagePage() {
           <Col xs={24} sm={8}>
             <Card>
               <Statistic
-                title="Total Accepted Offers"
+                title="Total Offers"
                 value={offers.length}
                 valueStyle={{ color: '#3f8600' }}
                 prefix={
