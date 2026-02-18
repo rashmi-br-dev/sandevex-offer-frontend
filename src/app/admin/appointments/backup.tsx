@@ -62,7 +62,7 @@ export default function AppointmentsPage() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments`);
       const data = await response.json();
       
       if (response.ok) {
@@ -79,7 +79,7 @@ export default function AppointmentsPage() {
 
   const fetchAvailableDates = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/slots/dates`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}slots/dates`);
       const data = await response.json();
       
       if (response.ok) {
@@ -92,7 +92,7 @@ export default function AppointmentsPage() {
 
   const fetchSlotAvailability = async (date: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/slots?date=${date}&_t=${Date.now()}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}slots?date=${date}&_t=${Date.now()}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -109,7 +109,7 @@ export default function AppointmentsPage() {
     setError('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export default function AppointmentsPage() {
 
   const handleSendBookingEmail = async (appointment: Appointment) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/send-booking-email`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments/send-booking-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ export default function AppointmentsPage() {
 
   const handleMarkCollected = async (appointmentId: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${appointmentId}/collected`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments/${appointmentId}/collected`, {
         method: 'PATCH',
       });
 
