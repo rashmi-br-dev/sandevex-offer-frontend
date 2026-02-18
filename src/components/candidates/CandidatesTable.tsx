@@ -81,15 +81,9 @@ export default function CandidatesTable() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-    // Filter students based on search text and status (for client-side filtering)
+    // Filter students based on status only (search is now server-side)
     const filteredStudents = useMemo(() => {
         return students.filter(student => {
-            const matchesSearch =
-                searchText === '' ||
-                student.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
-                student.email.toLowerCase().includes(searchText.toLowerCase()) ||
-                (student.collegeName && student.collegeName.toLowerCase().includes(searchText.toLowerCase()));
-
             // Filter by offer status
             const matchesStatus = !statusFilter ||
                 (statusFilter === 'sent' && offerStatuses[student._id]) ||
@@ -98,9 +92,9 @@ export default function CandidatesTable() {
                 (statusFilter === 'pending' && offerStatuses[student._id] === 'pending') ||
                 (statusFilter === 'declined' && offerStatuses[student._id] === 'declined');
 
-            return matchesSearch && matchesStatus;
+            return matchesStatus;
         });
-    }, [students, searchText, statusFilter, offerStatuses]);
+    }, [students, statusFilter, offerStatuses]);
 
     // Handle table change (pagination, filters, sorter)
     const handleTableChange = (
@@ -108,14 +102,16 @@ export default function CandidatesTable() {
         filters: Record<string, FilterValue | null>,
         sorter: SorterResult<Student> | SorterResult<Student>[],
     ) => {
-        fetchStudents(newPagination.current || 1, newPagination.pageSize || 10);
+        fetchStudents(newPagination.current || 1, newPagination.pageSize || 10, searchText);
     };
 
     // Fetch offer status for a candidate
     const fetchOfferStatus = useCallback(async (candidateId: string) => {
         try {
             setLoadingStatuses(prev => ({ ...prev, [candidateId]: true }));
-            const response = await fetch(`${apiUrl}/offers/${candidateId}/status`);
+            const response = await fetch(
+                `${apiUrl}/api/unified?path=offer-status&id=${candidateId}`
+            );
 
             if (response.ok) {
                 const data = await response.json();
@@ -133,13 +129,19 @@ export default function CandidatesTable() {
         }
     }, [apiUrl]);
 
-    // Fetch students data with pagination
-    const fetchStudents = useCallback(async (page: number, pageSize: number) => {
+    // Fetch students data with pagination and search
+    const fetchStudents = useCallback(async (page: number, pageSize: number, search?: string) => {
         try {
             setLoading(true);
-            console.log('Fetching students from:', `${apiUrl}/students?page=${page}&limit=${pageSize}`);
+            
+            // Build URL with search parameter if provided
+            const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+            console.log('Fetching students from:', `${apiUrl}students?page=${page}&limit=${pageSize}${searchParam}`);
+            console.log('Search term:', search);
 
-            const response = await fetch(`${apiUrl}/students?page=${page}&limit=${pageSize}`);
+            const response = await fetch(
+                `${apiUrl}/api/unified?path=students&page=${page}&limit=${pageSize}${searchParam}`
+            );
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -150,7 +152,7 @@ export default function CandidatesTable() {
             const result = await response.json();
             console.log('API Response:', result);
 
-            const studentsData = result.data || [];
+            const studentsData = result.students || [];
 
             console.log('Processed students data:', studentsData);
 
@@ -178,11 +180,18 @@ export default function CandidatesTable() {
 
     // Initial fetch and EmailJS initialization
     useEffect(() => {
-        fetchStudents(1, 10);
+        fetchStudents(1, 10, searchText);
 
         // Initialize EmailJS
         emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
     }, []);
+
+    // Handle search changes
+    useEffect(() => {
+        // Reset to page 1 when search changes
+        setPagination(prev => ({ ...prev, current: 1 }));
+        fetchStudents(1, 10, searchText); // Use default page size instead of pagination.pageSize
+    }, [searchText, fetchStudents]);
 
     const handleSendOffer = async (studentId: string) => {
         try {
@@ -246,7 +255,7 @@ export default function CandidatesTable() {
 
             // Create offer record in backend
             console.log('💾 Creating offer record in backend...');
-            const offerResponse = await fetch(`${apiUrl}/offers/create-record`, {
+            const offerResponse = await fetch(`${apiUrl}/api/unified?path=create-offer`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -257,6 +266,7 @@ export default function CandidatesTable() {
                     status: 'pending'
                 }),
             });
+
 
             console.log('💾 Backend response status:', offerResponse.status);
 
