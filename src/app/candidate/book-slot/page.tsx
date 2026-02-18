@@ -60,7 +60,7 @@ export default function BookSlotPage() {
 
   const fetchCandidatePhone = async (candidateId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/students/${candidateId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/${candidateId}`);
       const data = await res.json();
       
       if (res.ok && data.student?.mobile) {
@@ -79,8 +79,8 @@ export default function BookSlotPage() {
   }, []);
 
   const fetchAvailableDates = async () => {
-    const res = await fetch('http://localhost:5000/api/slots/dates');
-    const data = await res.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/slots/dates`);
+    const data = await response.json();
     setAvailableDates(data.dates || []);
     setLoading(false);
   };
@@ -108,16 +108,16 @@ export default function BookSlotPage() {
     console.log('Submitting appointment data:', formData);
 
     try {
-      const res = await fetch('http://localhost:5000/api/appointments', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const data = await response.json();
       console.log('Appointment response:', data);
 
-      if (!res.ok) notifyError(data.message);
+      if (!response.ok) notifyError(data.message);
       else {
         notifySuccess();
         setTimeout(() => router.push('/thank-you'), 2500); // Redirect to thank-you page
